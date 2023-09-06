@@ -1,18 +1,48 @@
 <?php
 
+$users = [
+    [
+        'full_name' => 'Mickaël Andrieu',
+        'email' => 'mickael.andrieu@exemple.com',
+        'age' => 34,
+    ],
+    [
+        'full_name' => 'Mathieu Nebra',
+        'email' => 'mathieu.nebra@exemple.com',
+        'age' => 34,
+    ],
+    [
+        'full_name' => 'Laurène Castor',
+        'email' => 'laurene.castor@exemple.com',
+        'age' => 28,
+    ],
+];
+
 $recipes = [
     [
         'title' => 'Cassoulet',
-        'recipe' => 'des flageolets !',
+        'recipe' => '',
         'author' => 'mickael.andrieu@exemple.com',
         'is_enabled' => true,
     ],
     [
+        'title' => 'Couscous',
+        'recipe' => '',
+        'author' => 'mickael.andrieu@exemple.com',
+        'is_enabled' => false,
+    ],
+    [
         'title' => 'Escalope milanaise',
-        'recipe' => 'prenez une belle',
+        'recipe' => '',
         'author' => 'mathieu.nebra@exemple.com',
         'is_enabled' => true,
-    ]
+    ],
+    [
+        'title' => 'Salade Romaine',
+        'recipe' => '',
+        'author' => 'laurene.castor@exemple.com',
+        'is_enabled' => false,
+    ],
 ];
 
 $romanSalad = [
@@ -28,25 +58,17 @@ $sushis = [
     'author' => 'laurene.castor@exemple.com',
     'is_enabled' => false,
 ];
-    
-// Répond true !
-$isRomandSaladValid = isValidRecipe($romanSalad);
-    
-// Répond false !
-$isSushisValid = isValidRecipe($sushis);
-    
+
 function isValidRecipe(array $recipe) {
     if (array_key_exists('is_enabled', $recipe)) {
-        $isEnabled = $recipe['is_enabled'];
-    } else {
-        $isEnabled = false;
+        return $recipe['is_enabled'];
     }
-    return $isEnabled;
+    return false;
 }
 
 function getRecipes(array $recipes) {
     $validRecipes = [];
-    foreach($recipes as $recipe) {
+    foreach ($recipes as $recipe) {
         if (isValidRecipe($recipe)) {
             $validRecipes[] = $recipe;
         }
@@ -54,35 +76,30 @@ function getRecipes(array $recipes) {
     return $validRecipes;
 }
 
-function displayAuthor(string $authorEmail, array $users) 
-{
-    for ($i = 0; $i < count($users); $i++) {
-        $author = $users[$i];
-        if ($authorEmail === $author['email']) {
-            return $author['full_name'] . '(' . $author['age'] . ' ans)';
+function displayAuthor(string $authorEmail, array $users) {
+    foreach ($users as $user) {
+        if ($authorEmail === $user['email']) {
+            return $user['full_name'] . ' (' . $user['age'] . ' ans)';
         }
     }
+    return '';
 }
 
 ?>
 
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Affichage des recettes</title>
-    </head>
-    <body>
-
+<head>
+    <title>Affichage des recettes</title>
+</head>
+<body>
+    <h1>Liste des recettes de cuisine</h1>
+    <ul>
         <?php
-        foreach($recipes as $recipe) {?>
+        foreach (getRecipes($recipes) as $recipe) { ?>
             <h2>  <?php echo $recipe['title'] ?></h2>
-            <p> Etape 1 : <?php echo $recipe['recipe'] ?></p>
-            <p> <?php echo $recipe['author'] ?></p>
+            <?php echo displayAuthor($recipe['author'], $users); ?>     
             <?php }?>
-
-        
-    </body>
+    </ul>
+</body>
 </html>
-
-
-        
