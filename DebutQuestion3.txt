@@ -1,0 +1,4 @@
+foreach(getRecipes($recipes) as $recipe) {
+	echo $recipe['title'];
+} 
+
