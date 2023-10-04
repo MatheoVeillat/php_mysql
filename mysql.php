@@ -18,18 +18,6 @@ try {
 }
 ?>
 
-<?php
-// On récupère tout le contenu de la table recipes
-$sqlQuery = 'SELECT * FROM recipes WHERE is_enabled = 1';
-$recipesStatement = $db->prepare($sqlQuery);
-$recipesStatement->execute();
-$recipes = $recipesStatement->fetchAll();
-?>
+
 <!-- On affiche chaque recette une à une -->
-<?php foreach ($recipes as $recipe) : ?>
-    <p><?php echo $recipe['title']; ?></p>
-    <p>Auteur : <?php echo $recipe['author']; ?></p>
-    <p>Recette : <?php echo $recipe['recipe']; ?></p>
-    <p>---------------------</p>
-<?php endforeach; ?>
 
