@@ -26,7 +26,7 @@ $insertRecipe = $db->prepare($sqlQuery);
 $insertRecipe->execute([
     'title' => $title,
     'recipe' => $recipe,
-    'author' => "maz",
+    'author' => $_SESSION['LOGGED_USER'],
     'is_enabled' => 1,
 ]);
 ?>
