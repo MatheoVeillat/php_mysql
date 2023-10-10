@@ -14,30 +14,27 @@
 <body class="d-flex flex-column min-vh-100">
     <div class="container">
 
-    <!-- Navigation -->
-    <?php include_once('header.php'); ?>
+        <!-- Navigation -->
+        <?php include_once('header.php'); ?>
 
-    <!-- Inclusion des fichiers utilitaires -->
-    <?php 
-        include_once('variables.php');
-        include_once('functions.php');
-    ?>
+        <!-- Inclusion des fichiers utilitaires -->
+        <?php 
+            include_once('variables.php');
+            include_once('functions.php');
+        ?>
 
-    <!-- Inclusion du formulaire de connexion -->
-    <?php include_once('login.php'); ?>
-    
-    <h1>Site de Recettes !</h1>
+        <!-- Inclusion du formulaire de connexion -->
+        <?php include_once('login.php'); ?>
+        
+        <h1>Site de Recettes !</h1>
 
-    <!-- Si l'utilisateur existe, on affiche les recettes -->
-    <?php if(isset($_SESSION['LOGGED_USER'])): ?>
-        <?php foreach(getRecipes($recipes, 5) as $recipe) : ?>
-            <article>
-                <h3><?php echo $recipe['title']; ?></h3>
-                <div><?php echo $recipe['recipe']; ?></div>
-                <i><?php echo displayAuthor($recipe['author'], $users); ?></i>
-            </article>
-        <?php endforeach ?>
-    <?php endif; ?>
+
+        <!-- Si l'utilisateur existe, on affiche les recettes -->
+        <?php 
+            if (isset($_SESSION['LOGGED_USER'])) {
+                include_once('affichageRecette.php');
+            }
+        ?>
     </div>
 
     <?php include_once('footer.php'); ?>

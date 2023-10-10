@@ -1,5 +1,4 @@
 <?php
-// functions.php
 
 function isValidRecipe(array $recipe) : bool
 {
@@ -34,3 +33,6 @@ function getRecipes(array $recipes) : array
 
     return $validRecipes;
 }
+
+
+
