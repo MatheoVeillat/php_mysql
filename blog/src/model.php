@@ -23,4 +23,4 @@ function getPosts() {
     }
     return $posts;
 }
-?>
+
