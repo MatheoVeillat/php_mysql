@@ -1,48 +1,27 @@
-<!DOCTYPE html>
-<html>
-   <head>
-      <meta charset="utf-8" />
-      <title>Le blog de l'AVBN</title>
-      <link href="style.css" rel="stylesheet" />
-   </head>
+<?php
+try {
+    $database = new PDO('mysql:host=localhost;dbname=blog;charset=utf8', 'root', 'root');
+    $database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Add this line for error handling
+} catch (Exception $e) {
+    die('Erreur : ' . $e->getMessage());
+}
 
-   <body>
-      <h1>Le super blog de l'AVBN !</h1>
-      <p>Derniers billets du blog :</p>
+// Retrieve the 5 latest posts
+$statement = $database->query(
+   "SELECT id, titre, contenu, DATE_FORMAT(date_creation, '%d/%m/%Y à %Hh%imin%ss') AS date_creation_fr FROM billets ORDER BY date_creation DESC LIMIT 0, 5"
+);
+$posts = [];
+while ($row = $statement->fetch()) {
+    $post = [
+        'title' => $row['titre'], // Fixed typo in variable name
+        'content' => $row['contenu'],
+        'frenchCreationDate' => $row['date_creation_fr'],
+    ];
+    $posts[] = $post; // Add this line to append the post to the $posts array
+}
 
-      <?php
-      // Connexion à la base de données
-      try
-      {
-          $bdd = new PDO('mysql:host=localhost;dbname=blog;charset=utf8', 'root', 'root');
-      }
-      catch(Exception $e){
-            die( 'Erreur : '.$e->getMessage()   );
-      }
+require('templates/homepage.php');
+?>
 
-      // On récupère les 5 derniers billets
-      $req = $bdd->query('SELECT id, titre, contenu, DATE_FORMAT(date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_creation_fr FROM billets ORDER BY date_creation DESC LIMIT 0, 5');
 
-      while ($donnees = $req->fetch())
-      {
-      ?>
-      <div class="news">
-         <h3>
-            <?php echo htmlspecialchars($donnees['titre']); ?>
-            <em>le <?php echo $donnees['date_creation_fr']; ?></em>
-         </h3>
-         <p>
-         <?php
-         // On affiche le contenu du billet
-                echo    nl2br ( htmlspecialchars( $donnees['contenu']));
-         ?>
-         <br />
-         <em><a href="#">Commentaires</a></em>
-         </p>
-      </div>
-      <?php
-      } // Fin de la boucle des billets
-      $req->closeCursor();
-      ?>
-   </body>
-</html>
+
