@@ -1,4 +1,12 @@
-<?php session_start();  ?>
+<?php session_start();  
+include_once('mysql.php'); 
+print_r($_GET);
+$affichageQuery = 'SELECT recipe_id, title, recipe, author FROM recipes WHERE recipe_id = :recipe_id';
+$affichage = $db->prepare($affichageQuery);
+$affichage->execute(['recipe_id' => $_GET['recipe_id']]);
+($recipe = $affichage->fetch(PDO::FETCH_ASSOC)) 
+
+?>
 <!DOCTYPE html>
 <html>
 <head>
