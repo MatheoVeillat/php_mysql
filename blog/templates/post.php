@@ -32,6 +32,13 @@
 </form>
 
 <?php
+
+class PostRepository
+{
+    public ?PDO $database = null;
+}
+
+
 foreach ($comments as $comment) {
 ?>
     <p><strong><?= htmlspecialchars($comment->author) ?></strong> le <?= $comment->frenchCreationDate ?></p>
