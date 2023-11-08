@@ -1,5 +1,5 @@
 <?php
-
+namespace Application\controllers\homepage; 
 class Comment
 {
     public $author;
