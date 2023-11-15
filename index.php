@@ -1,10 +1,5 @@
 <?php
 
-const RESULT_WINNER = 1;
-const RESULT_LOSER = -1;
-const RESULT_DRAW = 0;
-const RESULT_POSSIBILITIES = [RESULT_WINNER, RESULT_LOSER, RESULT_DRAW];
-
 class Player 
 {
     public $level;
@@ -12,12 +7,17 @@ class Player
 
 class Encounter
 {
-    public function probabilityAgainst(int $levelPlayerOne, int $againstLevelPlayerTwo)
+    public $RESULT_WINNER = 1;
+    public $RESULT_LOSER = -1;
+    public $RESULT_DRAW = 0;
+    public $RESULT_POSSIBILITIES = [RESULT_WINNER, RESULT_LOSER, RESULT_DRAW];
+
+    public static function probabilityAgainst(int $levelPlayerOne, int $againstLevelPlayerTwo)
     {
         return 1/(1+(10 ** (($againstLevelPlayerTwo - $levelPlayerOne)/400)));
     }
 
-    public function setNewLevel(int &$levelPlayerOne, int $againstLevelPlayerTwo, int $playerOneResult)
+    public static function setNewLevel(int &$levelPlayerOne, int $againstLevelPlayerTwo, int $playerOneResult)
     {
         if (!in_array($playerOneResult, RESULT_POSSIBILITIES)) {
             trigger_error(sprintf('Invalid result. Expected %s',implode(' or ', RESULT_POSSIBILITIES)));
