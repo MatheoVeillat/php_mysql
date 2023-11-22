@@ -76,9 +76,9 @@ class Lobby
         }
     }
 }
+
 $greg = new QueuingPlayer('greg', 400);
 $jade = new QueuingPlayer('jade', 476);
-
 
 $lobby = new Lobby();
 $lobby->addPlayers($greg, $jade);
