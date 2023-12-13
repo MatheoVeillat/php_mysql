@@ -1,42 +1,121 @@
-<?php session_start(); // $_SESSION ?>
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Site de Recettes - Page d'accueil</title>
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" 
-        rel="stylesheet"
-    >
-</head>
-<body class="d-flex flex-column min-vh-100">
-    <div class="container">
+<?php
 
-        <!-- Navigation -->
-        <?php include_once('header.php'); ?>
+/*
+ * This file is part of the OpenClassRoom PHP Object Course.
+ *
+ * (c) Grégoire Hébert <contact@gheb.dev>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
-        <!-- Inclusion des fichiers utilitaires -->
-        <?php 
-            include_once('variables.php');
-            include_once('functions.php');
-        ?>
+declare(strict_types=1);
 
-        <!-- Inclusion du formulaire de connexion -->
-        <?php include_once('login.php'); ?>
-        
-        <h1>Site de Recettes !</h1>
+class Lobby
+{
+    /** @var array<QueuingPlayer> */
+    public array $queuingPlayers = [];
 
+    public function findOponents(QueuingPlayer $player): array
+    {
+        $minLevel = round($player->getRatio() / 100);
+        $maxLevel = $minLevel + $player->getRange();
 
-        <!-- Si l'utilisateur existe, on affiche les recettes -->
-        <?php 
-            if (isset($_SESSION['LOGGED_USER'])) {
-                include_once('affichageRecette.php');
-            }
-        ?>
-    </div>
+        return array_filter($this->queuingPlayers, static function (QueuingPlayer $potentialOponent) use ($minLevel, $maxLevel, $player) {
+            $playerLevel = round($potentialOponent->getRatio() / 100);
 
-    <?php include_once('footer.php'); ?>
-</body>
-</html>
+            return $player !== $potentialOponent && ($minLevel <= $playerLevel) && ($playerLevel <= $maxLevel);
+        });
+    }
+
+    public function addPlayer(Player $player): void
+    {
+        $this->queuingPlayers[] = new QueuingPlayer($player);
+    }
+
+    public function addPlayers(Player ...$players): void
+    {
+        foreach ($players as $player) {
+            $this->addPlayer($player);
+        }
+    }
+}
+
+abstract class AbstractPlayer
+{
+    public function __construct(public string $name = 'anonymous', public float $ratio = 400.0)
+    {
+    }
+
+    abstract public function getName(): string;
+
+    abstract public function getRatio(): float;
+
+    abstract protected function probabilityAgainst(self $player): float;
+
+    abstract public function updateRatioAgainst(self $player, int $result): void;
+}
+
+class Player extends AbstractPlayer
+{
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    protected function probabilityAgainst(AbstractPlayer $player): float
+    {
+        return 1 / (1 + (10 ** (($player->getRatio() - $this->getRatio()) / 400)));
+    }
+
+    public function updateRatioAgainst(AbstractPlayer $player, int $result): void
+    {
+        $this->ratio += 32 * ($result - $this->probabilityAgainst($player));
+    }
+
+    public function getRatio(): float
+    {
+        return $this->ratio;
+    }
+}
+
+class QueuingPlayer extends Player
+{
+    public function __construct(AbstractPlayer $player, protected int $range = 1)
+    {
+        parent::__construct($player->getName(), $player->getRatio());
+    }
+
+    public function getRange(): int
+    {
+        return $this->range;
+    }
+
+    public function upgradeRange(): void
+    {
+        $this->range = min($this->range + 1, 40);
+    }
+}
+
+class BlitzPlayer extends Player
+{
+    public function __construct(public string $name = 'anonymous', public float $ratio = 1200.0)
+    {
+        parent::__construct($name, $ratio);
+    }
+
+    public function updateRatioAgainst(AbstractPlayer $player, int $result): void
+    {
+        $this->ratio += 128 * ($result - $this->probabilityAgainst($player));
+    }
+}
+
+$greg = new BlitzPlayer('greg');
+$jade = new BlitzPlayer('jade');
+
+$lobby = new Lobby();
+$lobby->addPlayers($greg, $jade);
+
+var_dump($lobby->findOponents($lobby->queuingPlayers[0]));
+
+exit(0);
